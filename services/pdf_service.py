@@ -11,24 +11,30 @@ from config.settings import CHUNK_SIZE, CHUNK_OVERLAP
 def process_pdf(file):
 
     # Cria o arquivo temporário
-    with tempfile.NamedTemporaryFile(delete= False, suffix= ".pdf") as temp_file:
+    try:
+        with tempfile.NamedTemporaryFile(delete= False, suffix= ".pdf") as temp_file:
 
-        temp_file.write(file.read())
-        temp_path = temp_file.name
+            temp_file.write(file.read())
+            temp_path = temp_file.name
 
-    # Carrega o caminho do pdf
-    loader = PyPDFLoader(temp_path)
+        # Carrega o caminho do pdf
+        loader = PyPDFLoader(temp_path)
 
-    # Cria o doc do pdf
-    docs = loader.load()
+        # Cria o doc do pdf
+        docs = loader.load()
 
-    # Remove o pdf da memória
-    os.remove(temp_path)
+        # Remove o pdf da memória
+        os.remove(temp_path)
 
-    # Cria os chunks sobre os dados do pdf
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size = CHUNK_SIZE,
-        chunk_overlap= CHUNK_OVERLAP,
-    )
+        # Cria os chunks sobre os dados do pdf
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size = CHUNK_SIZE,
+            chunk_overlap= CHUNK_OVERLAP,
+        )
 
-    return text_splitter.split_documents(docs)
+        return text_splitter.split_documents(docs)
+    
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise Exception(f"Falha ao processar o PDF: {e}")

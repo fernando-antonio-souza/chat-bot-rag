@@ -24,38 +24,41 @@ class RAGService:
         )
     
     def ask(self, question, messages):
-        llm = ChatOpenAI(
-            model= self.model_name
-        )
+        try:
+            llm = ChatOpenAI(
+                model= self.model_name
+            )
 
-        retriever = (
-            self.vector_store.as_retriever(search_kwargs= {"k":4})
-        )
+            retriever = (
+                self.vector_store.as_retriever(search_kwargs= {"k":4})
+            )
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", RAG_SYSTEM_PROMPT),
+            prompt = ChatPromptTemplate.from_messages(
+                [
+                    ("system", RAG_SYSTEM_PROMPT),
 
-                *[
-                    (
-                        msg["role"],
-                        msg["content"]
-                    )
-                    for msg in messages
-                ],
+                    *[
+                        (
+                            msg["role"],
+                            msg["content"]
+                        )
+                        for msg in messages
+                    ],
 
-                ("human", "{input}")
-            ]
-        )
+                    ("human", "{input}")
+                ]
+            )
 
-        rag_chain = (
-            {
-                "context": retriever | self.format_docs,
-                "input": RunnablePassthrough(),
-            }
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
+            rag_chain = (
+                {
+                    "context": retriever | self.format_docs,
+                    "input": RunnablePassthrough(),
+                }
+                | prompt
+                | llm
+                | StrOutputParser()
+            )
 
-        return rag_chain.invoke(question)
+            return rag_chain.invoke(question)
+        except Exception as e:
+            return f"Erro ao consultar os documentos: {e}"
