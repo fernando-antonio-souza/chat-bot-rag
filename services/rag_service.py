@@ -16,6 +16,7 @@ class RAGService:
         self.vector_store= vector_store
 
 
+    # Junta o conteúdo dos documentos em um único texto separado por quebras
     def format_docs(self, docs):
 
         return "\n\n".join(
@@ -23,6 +24,7 @@ class RAGService:
             for doc in docs
         )
     
+    # Monta a chain RAG: recupera contexto dos PDFs e envia ao LLM
     def ask(self, question, messages):
         try:
             llm = ChatOpenAI(

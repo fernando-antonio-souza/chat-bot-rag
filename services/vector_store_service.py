@@ -5,7 +5,7 @@ from langchain_openai import OpenAIEmbeddings
 
 from config.settings import PERSIST_DIRECTORY
 
-# Função que verifica se o db foi criado, se foi criado cria os vetores
+# Carrega a base vetorial do disco se existir
 def vector_store_load():
 
     if os.path.exists(PERSIST_DIRECTORY):
@@ -18,7 +18,7 @@ def vector_store_load():
     return None
 
 
-# Função que salva o vetores se existirem em documentos
+# Adiciona chunks à base existente ou cria uma nova
 def vector_store_save_documents(chunks, vector_store = None):
 
     if vector_store:

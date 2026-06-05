@@ -1,4 +1,4 @@
-
+# Prompt principal do sistema — instrui o LLM a responder com base no contexto extraído dos PDFs
 RAG_SYSTEM_PROMPT = '''
 Você é um assistente especialista em responder perguntas 
 sobre os documentos PDF.

@@ -11,7 +11,7 @@ from services.rag_service import RAGService
 load_dotenv()
 
 
-# ======== Layout página =========
+# ===== Layout página =====
 st.set_page_config(
     page_title= "Chat PyGPT",
     page_icon= "📄",
@@ -69,11 +69,14 @@ with st.sidebar:
         ]
     )
 
+# ===== Exibe histórico da conversa ======
 for message in (st.session_state["messages"]):
 
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+
+# ===== Entrada do usuário =====
 question = st.chat_input("Como  posso ajudar?")
 
 if question:
@@ -84,6 +87,7 @@ if question:
 
     else:
 
+        # Adiciona a pergunta na tela e no histórico
         with st.chat_message("user"):
             st.markdown(question)
 
@@ -94,11 +98,13 @@ if question:
             }
         )
 
+        # Instancia o serviço RAG com o modelo e base vetorial
         rag = RAGService(
             model_name= selected_model,
             vector_store= vector_store,
         )
 
+        # Obtém a resposta do LLM com contexto dos PDFs
         with st.spinner("Pensando..."):
             try:
 
@@ -108,8 +114,9 @@ if question:
                 )
             except Exception as e:
                 st.error(f"Erro ao obter resposta: {e}")
-                reponse = "Desculpe, ocorreu um erro ao processar sua pergunta"
+                response = "Desculpe, ocorreu um erro ao processar sua pergunta"
 
+        # Exibe a resposta e salva no histórico
         with st.chat_message("assistant"):
             st.markdown(response)
 
