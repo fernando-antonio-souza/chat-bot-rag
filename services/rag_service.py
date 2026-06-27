@@ -42,7 +42,7 @@ class RAGService:
                     *[
                         (
                             msg["role"],
-                            msg["content"]
+                            msg["content"].replace("{", "{{").replace("}", "}}")
                         )
                         for msg in messages
                     ],
